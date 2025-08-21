@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments
+  labels:
+    app: payments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payments
+  template:
+    metadata:
+      labels:
+        app: payments
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "payments"
+        dapr.io/app-port: "3003"
+        dapr.io/config: "appconfig" # Referencing the central config
+    spec:
+      containers:
+        - name: payments
+          image: payments-service:latest
+          ports:
+            - containerPort: 3003
+          imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments
+spec:
+  type: ClusterIP
+  selector:
+    app: payments
+  ports:
+    - protocol: TCP
+      port: 3003
+      targetPort: 3003

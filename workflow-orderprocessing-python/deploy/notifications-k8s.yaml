@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications
+  labels:
+    app: notifications
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notifications
+  template:
+    metadata:
+      labels:
+        app: notifications
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "notifications"
+        dapr.io/app-port: "3001"
+        dapr.io/config: "appconfig"
+    spec:
+      containers:
+        - name: notifications
+          image: notifications-service:latest
+          ports:
+            - containerPort: 3001
+          imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notifications
+spec:
+  type: LoadBalancer
+  selector:
+    app: notifications
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001

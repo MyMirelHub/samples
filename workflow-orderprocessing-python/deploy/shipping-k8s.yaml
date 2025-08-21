@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+  labels:
+    app: shipping
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shipping
+  template:
+    metadata:
+      labels:
+        app: shipping
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "shipping"
+        dapr.io/app-port: "3004"
+        dapr.io/config: "appconfig" # Referencing the central config
+    spec:
+      containers:
+        - name: shipping
+          image: shipping-service:latest
+          ports:
+            - containerPort: 3004
+          imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping
+spec:
+  type: ClusterIP
+  selector:
+    app: shipping
+  ports:
+    - protocol: TCP
+      port: 3004
+      targetPort: 3004

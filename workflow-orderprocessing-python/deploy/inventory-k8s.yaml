@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory
+  labels:
+    app: inventory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory
+  template:
+    metadata:
+      labels:
+        app: inventory
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "inventory"
+        dapr.io/app-port: "3002"
+        dapr.io/config: "appconfig"
+    spec:
+      containers:
+        - name: inventory
+          image: inventory-service:latest
+          ports:
+            - containerPort: 3002
+          imagePullPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory
+spec:
+  type: ClusterIP
+  selector:
+    app: inventory
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
