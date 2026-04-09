@@ -36,3 +36,18 @@ spec:
       jsonPointers:
         - /spec/conversion/webhook/clientConfig/service/namespace
         - /spec/conversion/webhook/clientConfig/caBundle
+    - group: ""
+      kind: ConfigMap
+      name: dapr-trust-bundle
+      jsonPointers:
+        - /data
+        - /binaryData
+        - /metadata/labels
+        - /metadata/annotations
+    - group: ""
+      kind: Secret
+      name: dapr-trust-bundle
+      jsonPointers:
+        - /data
+        - /metadata/labels
+        - /metadata/annotations
